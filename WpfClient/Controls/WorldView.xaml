@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="WpfClient.Controls.WorldView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfClient.Controls"
+             xmlns:commonLib="clr-namespace:CommonLib.GamePong;assembly=CommonLib"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="800">
+    <UserControl.Resources>
+        <commonLib:World x:Key="GameWorld" />
+    </UserControl.Resources>
+    <Grid Background="Black">
+        <Viewbox>
+            <Canvas x:Name="WorldCanvas" Background="#384940" Width="800" Height="480">
+                <Rectangle x:Name="PadLeft"
+                    Fill="#199D27" Stroke="#83E97A"
+                    Canvas.Left="{Binding Source={StaticResource GameWorld}, Path=PadDistanceFromEdge}" 
+                    Canvas.Top="{Binding Source={StaticResource GameWorld}, Path=PadInitialPosY}"
+                    Width="{Binding Source={StaticResource GameWorld}, Path=PadWidth}" 
+                    Height="{Binding Source={StaticResource GameWorld}, Path=PadHeight}"
+                    RadiusX="5" RadiusY="5"/>
+                <Rectangle x:Name="PadRight"
+                    Fill="#4574B3" Stroke="#899FB6"
+                    Canvas.Right="{Binding Source={StaticResource GameWorld}, Path=PadDistanceFromEdge}" 
+                    Canvas.Top="{Binding Source={StaticResource GameWorld}, Path=PadInitialPosY}"
+                    Width="{Binding Source={StaticResource GameWorld}, Path=PadWidth}" 
+                    Height="{Binding Source={StaticResource GameWorld}, Path=PadHeight}"
+                    RadiusX="5" RadiusY="5"/>
+                <Ellipse x:Name="Ball"
+                    Width="{Binding Source={StaticResource GameWorld}, Path=BallSize}" 
+                    Height="{Binding Source={StaticResource GameWorld}, Path=BallSize}"
+                    Canvas.Left="395" 
+                    Canvas.Top="235"
+                    Fill="White"
+                    StrokeThickness="0">
+                </Ellipse>
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</UserControl>
