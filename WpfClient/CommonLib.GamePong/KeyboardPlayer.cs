@@ -83,14 +83,16 @@ namespace CommonLib.GamePong {
         /// <summary>
         /// Pause the game and all its background tasks
         /// </summary>
-        public override void Suspend() {
+        public new void Suspend() {
+            base.Suspend();
             threadBlocker.Reset();
         }
 
         /// <summary>
         /// Resume the game and all background tasks
         /// </summary>
-        public override void Resume() {
+        public new void Resume() {
+            base.Resume();
             threadBlocker.Set();
         }
 

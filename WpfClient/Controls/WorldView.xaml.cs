@@ -1,6 +1,7 @@
 ﻿using CommonLib.GamePong;
 using System;
 using System.ComponentModel;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,28 +38,88 @@ namespace WpfClient.Controls {
             // make sure that on shutdown we invoke a method to cleanup all resources
             Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
 
+        }
+
+        /// <summary>
+        /// Creates the game object
+        /// </summary>
+        public void InitializeGameAsServer(int port) {
+            
             // create a world (set of configuration values) to use by the players
             World world = new World();
 
             // creates the player to control the left pad
             playerLeft = new KeyboardPlayer(world, WorldSide.Left, Key.Up, Key.Down);
             // creates the player to control the right pad
-            playerRight = new KeyboardPlayer(world, WorldSide.Right, Key.W, Key.S);
+            playerRight = new RemotePlayer(world, WorldSide.Right);
+
+            // creates the game object
+            var newGame = new PongGameServer(world, playerLeft, playerRight);
+            // attach event listeners
+            newGame.GameRefreshed += Game_GameRefreshed;
+            newGame.SideWallHit += Game_SideWallHit;
+            newGame.NewConnection += ServerNewConnection;
+
+            newGame.StartServer(port);
+
+            game = newGame;
+        }
+
+        private void ServerNewConnection(object sender, CommonLib.Events.NewConnectionEventArgs e) {
+            
+            // dispatch the call to the UI thread to update the controls
+            try {
+                Dispatcher.Invoke(new Action(() => {
+                    // do your UI changes here
+
+                }));
+            } catch (TaskCanceledException) {
+                // catch on dispatcher shutdown
+                // exit normally
+            }
+        }
+
+        public void InitializeGameAsClient(IPAddress ip, int port) {
+
+            // create a world (set of configuration values) to use by the players
+            World world = new World();
+            // creates the player to control the left pad
+            playerLeft = new RemotePlayer(world, WorldSide.Left);
+            // creates the player to control the right pad
+            playerRight = new KeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down);
+
+            // creates the game object
+            var newGame = new PongGameClient(world, playerLeft, playerRight);
+            // attach event listeners
+            newGame.GameRefreshed += Game_GameRefreshed;
+            newGame.SideWallHit += Game_SideWallHit;
+
+            newGame.ConnectToServer(ip, port);
+
+            game = newGame;
+        }
+
+        public void InitializeSinglePlayer() {
+            // create a world (set of configuration values) to use by the players
+            World world = new World();
+            // creates the player to control the left pad
+            playerLeft = new KeyboardPlayer(world, WorldSide.Left, Key.W, Key.S);
+            // creates the player to control the right pad
+            playerRight = new KeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down);
 
             // creates the game object
             game = new PongGame(world, playerLeft, playerRight);
             // attach event listeners
             game.GameRefreshed += Game_GameRefreshed;
             game.SideWallHit += Game_SideWallHit;
-
         }
 
         public void StartGame() {
-            game.StartGame();
+            game?.StartGame();
         }
 
         public void StopGame() {
-            game.StopGame();
+            game?.StopGame();
         }
 
         /// <summary>
@@ -66,7 +127,7 @@ namespace WpfClient.Controls {
         /// a good moment to stop the background threads.
         /// </summary>
         private void Dispatcher_ShutdownStarted(object sender, EventArgs e) {
-            game.StopGame();
+            game?.StopGame();
         }
 
         /// <summary>

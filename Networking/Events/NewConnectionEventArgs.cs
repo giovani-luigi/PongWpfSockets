@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CommonLib.Server {
+namespace CommonLib.Events {
     public class NewConnectionEventArgs : EventArgs {
         
         public Socket Socket { get; }

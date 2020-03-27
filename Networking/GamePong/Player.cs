@@ -7,10 +7,11 @@ namespace CommonLib.GamePong {
     /// <summary>
     /// This is an abstract (base) class, used to represent a player in the game.
     /// </summary>
+    [Serializable]
     public abstract class Player : WorldObject {
 
         public int Score = 0;
-
+        private bool paused = false;
         private readonly WorldSide playerSide;
 
         protected Player(World world, WorldSide playerSide) : base(world, world.PadWidth, world.PadHeight) {
@@ -22,9 +23,21 @@ namespace CommonLib.GamePong {
 
         public abstract void Stop();
 
-        public abstract void Suspend();
+        public virtual void Suspend() {
+            paused = true;
+        }
 
-        public abstract void Resume();
+        public virtual void Resume() {
+            paused = false;
+        }
+
+        public override PointF Position {
+            get => base.Position;
+            set {
+                if (paused) return;
+                base.Position = value;
+            }
+        }
 
         public void MoveToInitialPosition() {
             if (playerSide == WorldSide.Left) {

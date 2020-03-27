@@ -1,11 +1,30 @@
 ﻿using CommonLib.GamePong;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace CommonLib.GamePong {
 
+    /// <summary>
+    /// Represents the game scene with all players/elements as 
+    /// field members contained inside this class
+    /// </summary>
+    [Serializable]
     public class PongGame {
+
+        // Serialized fields 
+        private Ball _ball;
+        private Player _playerLeft;
+        private Player _playerRight;
+
+        // Non-Serialized fields
+        [NonSerialized, JsonIgnore]
+        private Timer timerBall;
+        [NonSerialized, JsonIgnore]
+        protected bool started;
+        [NonSerialized, JsonIgnore]
+        private readonly World world;
 
         /// <summary> 
         /// Used for ball moved event 
@@ -19,13 +38,7 @@ namespace CommonLib.GamePong {
         public event GameChangedEventHandler GameRefreshed;
         public event SideWallHitEventHandler SideWallHit;
 
-        private Timer timerBall;
-
-        private bool started;
-
-        public World World { get; }
-
-        private Ball _ball;
+        public World World => world;
         public Ball Ball {
             get { return _ball; }
             set {
@@ -42,7 +55,6 @@ namespace CommonLib.GamePong {
             }
         }
 
-        private Player _playerLeft;
         public Player PlayerLeft {
             get { return _playerLeft; }
             set {
@@ -57,7 +69,6 @@ namespace CommonLib.GamePong {
             }
         }
 
-        private Player _playerRight;
         public Player PlayerRight {
             get { return _playerRight; }
             set {
@@ -72,8 +83,8 @@ namespace CommonLib.GamePong {
             }
         }
 
-        public PongGame(World world) {
-            World = world;
+        internal PongGame(World world) {
+            this.world = world;
             timerBall = new Timer(OnBallTimerTick);
             Ball = new Ball(world);
         }
@@ -83,34 +94,36 @@ namespace CommonLib.GamePong {
             PlayerRight = playerRight;
         }
 
-        public void StartGame() {
+        public virtual void StartGame() {
             if (started) return;
             started = true; // set before everything else for cross thread safety
             PlayerLeft.Start();
             PlayerRight.Start();
+            Ball.Paused = false;
             timerBall.Change(World.BallIntervalMs, World.BallIntervalMs);
         }
 
-        public void StopGame() {
+        public virtual void StopGame() {
             if (!started) return;
             PlayerLeft.Stop();
             PlayerRight.Stop();
+            Ball.Paused = true;
             timerBall.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
-        private void SuspendGame() {
+        public virtual void SuspendGame() {
             PlayerLeft.Suspend();
             PlayerRight.Suspend();
+            Ball.Paused = true;
             timerBall.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
-        public void RestartGame() {
-            PlayerLeft.MoveToInitialPosition();
-            PlayerRight.MoveToInitialPosition();
+        public virtual void RestartGame() {
             PlayerLeft.Resume();
             PlayerRight.Resume();
-            Ball.Reset();
             timerBall.Change(World.BallIntervalMs, World.BallIntervalMs);
+            Ball.Paused = false;
+            Ball.ResetPosition();
         }
 
         private void OnBallTimerTick(object state) {
@@ -132,7 +145,7 @@ namespace CommonLib.GamePong {
             // evaluate all consequences from the ball movement
             GameRefreshed?.Invoke(this, new EventArgs()); // notify listeners
         }
-        
+
         private void OnBallHitSideWalls(object sender, SideWallHitEventArgs e) {
             // stop the game while we invoke external code
             SuspendGame();

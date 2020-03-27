@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
@@ -11,7 +12,8 @@ namespace CommonLib.GamePong {
     }
 
     public delegate void ObjectMovedEventHandler(object sender, ObjectMovedEventArgs args);
-    
+
+    [Serializable]
     public class WorldObject {
 
         /// <summary>
@@ -19,15 +21,15 @@ namespace CommonLib.GamePong {
         /// </summary>
         public event ObjectMovedEventHandler ObjectMoved;
 
-        public World World { get; }
+        public World World;
 
         public int Height { get; }
 
         public int Width { get; }
 
-        private PointF _position;
+        private PointF _position;        
 
-        public PointF Position {
+        public virtual PointF Position {
             get { return _position; }
             set {
                 // calculate position limits for the object
@@ -43,6 +45,10 @@ namespace CommonLib.GamePong {
                     ObjectMoved?.Invoke(this, new ObjectMovedEventArgs() { Position = Position });
                 }
             }
+        }
+
+        internal void MoveTo(PointF position) {
+            Position = position;
         }
 
         public WorldObject(World world, int width, int height) {

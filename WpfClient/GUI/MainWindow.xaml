@@ -48,7 +48,7 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-     
+
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -57,6 +57,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
 
@@ -64,19 +65,19 @@
             <Label
                 Grid.Row="0"
                 Grid.Column="0"
-                Margin="0 0 0 0"
                 Background="#333B4C"
                 Foreground="White"
                 FontFamily="Tahoma"
                 FontWeight="SemiBold"
                 FontSize="14"
-                Content="SERVER CONNECTION"
+                Content="GAME MODES"
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
                 />
 
+            <!--MULTIPLAYER: I AM CLIENT -->
             <Grid 
-                Margin="10 0 10 0"
+                Margin="10,0,10,0"
                 Grid.Column="0"
                 Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -91,7 +92,7 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
-                    <RowDefinition Height="*"/> 
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <!--Server IP address-->
@@ -112,7 +113,7 @@
                     FontFamily="Consolas"
                     FontSize="14"
                     VerticalContentAlignment="Center"
-                    Text="0.0.0.0"
+                    Text="127.0.0.1"
                     />
 
                 <!--Port-->
@@ -161,7 +162,8 @@
                     Margin="0 10 0 0"
                     FontFamily="Tahoma"
                     FontWeight="SemiBold"
-                    Foreground="Black">
+                    Foreground="Black"
+                        Click="ButtonConnect_Click">
                     <WrapPanel>
                         <Image Height="24" Width="24" Source="../Resources/icoConnect32.png" Margin="0 0 5 0" />
                         <Label Content="CONNECT" VerticalAlignment="Center" />
@@ -181,8 +183,82 @@
 
             </Grid>
 
+            <!--MULTIPLAYER: I AM SERVER -->
+            <Grid 
+                Margin="10,0,10,0"
+                Grid.Column="0"
+                Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0"
+                    Margin="0 0 0 5"
+                    Padding="0"
+                    VerticalAlignment="Bottom"
+                    Foreground="White"
+                    Content="SERVER" 
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    FontFamily="Tahoma"
+                    />
+                
+                <!--Port-->
+                <Label Grid.Row="1" Grid.Column="0"
+                    Margin="0 0 0 5"
+                    Padding="0"
+                    VerticalAlignment="Bottom"
+                    Foreground="White"
+                    Content="Port" 
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    FontFamily="Tahoma"
+                    />
+                <TextBox Grid.Row="2" Grid.Column="0"
+                    x:Name="TextBox_Server_Port"
+                    Margin="0 0 0 10"
+                    VerticalAlignment="Stretch"
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    VerticalContentAlignment="Center"
+                    Text="555"
+                    />
+
+                <Button Grid.Row="3" Grid.Column="0"
+                    Margin="0 10 0 0"
+                    FontFamily="Tahoma"
+                    FontWeight="SemiBold"
+                    Foreground="Black"
+                    Click="ButtonStart_Click">
+                    <WrapPanel>
+                        <Image Height="24" Width="24" Source="../Resources/icoConnect32.png" Margin="0 0 5 0" />
+                        <Label Content="START SERVER" VerticalAlignment="Center" />
+                    </WrapPanel>
+                </Button>
+
+                <Button Grid.Row="4" Grid.Column="0"
+                    Margin="0 10 0 0"
+                    FontFamily="Tahoma"
+                    FontWeight="SemiBold"
+                    Foreground="Black">
+                    <WrapPanel>
+                        <Image Height="24" Width="24" Source="../Resources/icoDisconnect32.png" Margin="0 0 5 0" />
+                        <Label Content="STOP SERVER" VerticalAlignment="Center" />
+                    </WrapPanel>
+                </Button>
+
+            </Grid>
+
         </Grid>
-        
+
         <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -191,7 +267,7 @@
                 <RowDefinition Height="50" />
                 <RowDefinition Height="8*"/>
             </Grid.RowDefinitions>
-            
+
             <!--Top Status Bar-->
             <Rectangle Grid.Column="0" Grid.Row="0" 
                 Fill="#6A86A0"/>
@@ -241,14 +317,14 @@
                     />
 
             </Grid>
-            
+
             <!--Main Panel-->
             <controls:WorldView
                 x:Name="GameView"
                 Grid.Row="1"
                 Grid.Column="0"
                 Margin="10" ScoreUpdate="WorldView_ScoreUpdate">
-                
+
             </controls:WorldView>
         </Grid>
 
@@ -276,6 +352,6 @@
                    Content="Lag: 0 ms"/>
 
         </Grid>
-        
+
     </Grid>
 </Window>

@@ -22,6 +22,9 @@ namespace CommonLib.GamePong {
         Random random = new Random(); // uses default seed
 
         private Vector2 _direction = Vector2.Zero;
+
+        public bool Paused { get; set; } = false;
+
         private Vector2 Direction { 
             get { return _direction; } 
             set {
@@ -43,11 +46,11 @@ namespace CommonLib.GamePong {
         }
 
         public Ball(World world) : base(world, world.BallSize, world.BallSize) {
-            Reset();
+            ResetPosition();
         }
 
-        public void Reset() {
-
+        public void ResetPosition() {
+            
             MoveToCenter();
 
             // generates a random bounce to begin the game choosing 
@@ -90,7 +93,9 @@ namespace CommonLib.GamePong {
         /// <param name="worldObjects">The game objects to test for
         /// collisions</param>
         public void MoveNextBounceOn(IEnumerable<WorldObject> worldObjects) {
-            
+
+            if (Paused) return;
+
             // move to next position
             MoveNext();
 
