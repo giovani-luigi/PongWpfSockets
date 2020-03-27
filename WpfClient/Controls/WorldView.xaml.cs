@@ -1,6 +1,7 @@
 ﻿using CommonLib.GamePong;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,6 +41,14 @@ namespace WpfClient.Controls {
 
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e) {
+            
+            // do not run any further if in design time
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+
+            Keyboard.Focus(WorldCanvas);
+        }
+
         /// <summary>
         /// Creates the game object
         /// </summary>
@@ -49,7 +58,7 @@ namespace WpfClient.Controls {
             World world = new World();
 
             // creates the player to control the left pad
-            playerLeft = new KeyboardPlayer(world, WorldSide.Left, Key.Up, Key.Down);
+            playerLeft = new NewKeyboardPlayer(world, WorldSide.Left, Key.Up, Key.Down, this);
             // creates the player to control the right pad
             playerRight = new RemotePlayer(world, WorldSide.Right);
 
@@ -86,7 +95,7 @@ namespace WpfClient.Controls {
             // creates the player to control the left pad
             playerLeft = new RemotePlayer(world, WorldSide.Left);
             // creates the player to control the right pad
-            playerRight = new KeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down);
+            playerRight = new NewKeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down ,this);
 
             // creates the game object
             var newGame = new PongGameClient(world, playerLeft, playerRight);
@@ -103,9 +112,9 @@ namespace WpfClient.Controls {
             // create a world (set of configuration values) to use by the players
             World world = new World();
             // creates the player to control the left pad
-            playerLeft = new KeyboardPlayer(world, WorldSide.Left, Key.W, Key.S);
+            playerLeft = new NewKeyboardPlayer(world, WorldSide.Left, Key.W, Key.S, this);
             // creates the player to control the right pad
-            playerRight = new KeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down);
+            playerRight = new NewKeyboardPlayer(world, WorldSide.Right, Key.Up, Key.Down, this);
 
             // creates the game object
             game = new PongGame(world, playerLeft, playerRight);
@@ -170,5 +179,8 @@ namespace WpfClient.Controls {
             }
         }
 
+        private void UserControl_KeyDown(object sender, KeyEventArgs e) {
+            Debug.WriteLine($"Key down {e.Key}");
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommonLib.GamePong;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -10,20 +11,14 @@ namespace CommonLib.GamePong {
     /// Represents the game scene with all players/elements as 
     /// field members contained inside this class
     /// </summary>
-    [Serializable]
     public class PongGame {
 
-        // Serialized fields 
         private Ball _ball;
         private Player _playerLeft;
         private Player _playerRight;
 
-        // Non-Serialized fields
-        [NonSerialized, JsonIgnore]
         private Timer timerBall;
-        [NonSerialized, JsonIgnore]
         protected bool started;
-        [NonSerialized, JsonIgnore]
         private readonly World world;
 
         /// <summary> 
@@ -38,7 +33,18 @@ namespace CommonLib.GamePong {
         public event GameChangedEventHandler GameRefreshed;
         public event SideWallHitEventHandler SideWallHit;
 
+        public IEnumerable<GameObject> WorldObjects { 
+            get {
+                return new List<GameObject>() {
+                    Ball,
+                    PlayerLeft,
+                    PlayerRight 
+                };
+            }
+        }
+
         public World World => world;
+
         public Ball Ball {
             get { return _ball; }
             set {
@@ -160,6 +166,7 @@ namespace CommonLib.GamePong {
             // reset the game
             RestartGame();
         }
+               
 
     }
 }

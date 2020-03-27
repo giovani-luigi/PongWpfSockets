@@ -110,7 +110,8 @@ namespace CommonLib.Slim {
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = socket.EndSend(ar);
-                
+               
+
                 Log.WriteLine($"Sent {bytesSent} bytes to client.");
 
             } catch (Exception e) {
